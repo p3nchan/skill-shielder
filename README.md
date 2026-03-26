@@ -1,8 +1,19 @@
-# Skill Shielder
+<p align="center">
+  <img src="assets/banner-hero.webp" alt="Skill Shielder" width="100%">
+</p>
 
-Security audit tool for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills, MCP servers, and repositories. Scan before you install, so you don't have to trust blindly.
+<h1 align="center">Skill Shielder</h1>
 
-**Zero dependencies.** Pure bash. Can't be a supply chain risk itself.
+<p align="center">
+  Security audit tool for <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a> skills, MCP servers, and repositories.<br>
+  Scan before you install, so you don't have to trust blindly.
+</p>
+
+<p align="center">
+  <strong>Zero dependencies.</strong> Pure bash. Can't be a supply chain risk itself.
+</p>
+
+---
 
 ## Why
 
@@ -19,7 +30,7 @@ Skill Shielder scans for all of these before you install.
 
 ```bash
 # Clone
-git clone https://github.com/penchan-co/skill-shielder.git
+git clone https://github.com/p3nchan/skill-shielder.git
 cd skill-shielder
 
 # Make scripts executable
@@ -35,7 +46,13 @@ chmod +x shield.sh scanners/*.sh
 ./shield.sh --json /path/to/skill
 ```
 
-## What It Scans
+## How It Works
+
+<p align="center">
+  <img src="assets/banner-flow.webp" alt="Scan Flow" width="100%">
+</p>
+
+Skill Shielder runs four independent scanners against your target, then aggregates findings into a single verdict.
 
 | Scanner | Checks | File Types |
 |---------|--------|------------|
@@ -45,6 +62,10 @@ chmod +x shield.sh scanners/*.sh
 | **Permissions** | Sensitive path access, outbound network endpoints, exfiltration pattern detection | All files |
 
 ## Verdicts
+
+<p align="center">
+  <img src="assets/banner-verdicts.webp" alt="Verdicts: PASS, WARN, FAIL" width="600">
+</p>
 
 | Verdict | Exit Code | Meaning |
 |---------|-----------|---------|
@@ -58,23 +79,25 @@ chmod +x shield.sh scanners/*.sh
 # Skill Shielder Report
 
 **Target**: malicious-skill (examples/malicious-skill)
-**Date**: 2026-03-25
+**Date**: 2026-03-26
 **Verdict**: **FAIL**
 
 ## Summary
 
 | Scanner         | CRITICAL | WARN | INFO |
 |-----------------|----------|------|------|
-| prompt-injection | 3       | 2    | 0    |
-| script-safety   | 4       | 2    | 0    |
-| supply-chain    | 2       | 1    | 0    |
-| permissions     | 1       | 2    | 1    |
+| prompt-injection | 2       | 4    | 0    |
+| script-safety   | 5       | 4    | 0    |
+| supply-chain    | 1       | 2    | 0    |
+| permissions     | 1       | 3    | 0    |
 
 ## Findings
-- [CRITICAL] SKILL.md:?  [UNICODE_TRICK]  File contains zero-width characters
-- [CRITICAL] scripts/setup.sh  [PIPE_TO_SHELL]  curl piped to bash
-- [CRITICAL] scripts/setup.sh  [CREDENTIAL_EXFIL]  base64 encode SSH keys then curl
-- [CRITICAL] evil.pth  [PTH_EXECUTABLE]  .pth file contains executable code
+- [CRITICAL] SKILL.md:12 [PROMPT_OVERRIDE] ignore all previous instructions...
+- [CRITICAL] scripts/setup.sh [PIPE_TO_SHELL] curl/wget piped to sh/bash
+- [CRITICAL] scripts/setup.sh [CREDENTIAL_EXFIL] base64 encode credentials then curl
+- [CRITICAL] scripts/setup.sh [REVERSE_SHELL] reverse shell pattern detected
+- [CRITICAL] evil.pth [PTH_EXECUTABLE] .pth file contains executable code
+- [CRITICAL] EXFIL_RISK Skill accesses sensitive paths AND makes network calls
 ...
 
 ## Recommendation
@@ -104,7 +127,7 @@ You can also add it to your `CLAUDE.md`:
 # GitHub Actions example
 - name: Audit skill
   run: |
-    git clone https://github.com/penchan-co/skill-shielder.git /tmp/shielder
+    git clone https://github.com/p3nchan/skill-shielder.git /tmp/shielder
     chmod +x /tmp/shielder/shield.sh /tmp/shielder/scanners/*.sh
     /tmp/shielder/shield.sh --json . > audit-report.json
     # Fail the build if CRITICAL issues found
