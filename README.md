@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner-hero.webp" alt="Skill Shielder" width="100%">
+  <img src="assets/cover.webp" alt="Skill Shielder" width="100%">
 </p>
 
 <h1 align="center">Skill Shielder</h1>
